@@ -1,0 +1,19 @@
+# Blacklist files/folders in same directory as the .gitignore file
+/*
+
+# Whitelist some files
+!.gitignore
+!README.md
+!.zshrc
+
+# Ignore all files named .DS_Store or ending with .log
+**/.DS_Store
+**.log
+
+# Ignore everything config except vim config
+!.config/
+.config/*
+!.config/nvim
+.config/nvim/*
+!.config/nvim/init.vim
+!.config/nvim/coc-settings.json
