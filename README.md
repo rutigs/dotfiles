@@ -2,6 +2,7 @@
 
 * Install Zsh
 * Install Oh-my-zsh
+    * Move setup specific items to `$HOME/.profile`
 * Install yarn
 * Install language servers for coc-vim 
     * go language server `GO111MODULE=on go get golang.org/x/tools/gopls@latest`
