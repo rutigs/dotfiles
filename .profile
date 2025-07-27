@@ -1,5 +1,9 @@
+export EDITOR=nvim
+
 alias vim=nvim
 alias k=kubectl
+alias code=codium
+alias proj=$(cd /Users/rutigs/projects)
 
 function kge() {
 	kubectl -n $1 get event --field-selector involvedObject.name=$2
@@ -13,6 +17,10 @@ function kgl() {
     fi
 }
 
+finder() {
+    open .
+}
+
 # install ripgrep and fzf
 if type rg &> /dev/null; then
   export FZF_DEFAULT_COMMAND='rg --files'
@@ -20,10 +28,7 @@ if type rg &> /dev/null; then
 fi
 
 # these might be different on macos
-source /usr/share/doc/fzf/examples/key-bindings.zsh
-source /usr/share/doc/fzf/examples/completion.zsh
+source <(fzf --zsh)
 
 POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND='kubectl|helm|kubens|kubectx'
 
-# install p10k
-# install zoxide
