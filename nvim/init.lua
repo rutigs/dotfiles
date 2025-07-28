@@ -1,8 +1,25 @@
 vim.o.number = true
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
-vim.o.clipboard = unnamedplus
+vim.o.clipboard = unnamedplus -- use system clipboard
 vim.o.winborder = "rounded"
+
+vim.o.smartindent = true -- smart auto indenting
+vim.o.autoindent = true  -- copy indent from current line
+
+-- save undodir via file even after closing
+vim.o.undofile = true
+vim.o.undodir = vim.fn.expand("~/.vim/undodir")
+
+-- Move lines up/down
+vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
+vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
+vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
+vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
+
+-- Better indenting in visual mode
+vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
+vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 
 vim.pack.add({
 	{ src = "https://github.com/vague2k/vague.nvim" },
@@ -26,6 +43,9 @@ vim.pack.add({
 
 	-- tmux-nav
 	{ src = "https://github.com/christoomey/vim-tmux-navigator" },
+
+	-- lualine
+	{ src = "https://github.com/nvim-lualine/lualine.nvim" },
 })
 
 -- lspconfig
@@ -103,3 +123,10 @@ vim.keymap.set('n', 'C-h', ':TmuxNavigateLeft<CR>')
 vim.keymap.set('n', 'C-j', ':TmuxNavigateDown<CR>')
 vim.keymap.set('n', 'C-k', ':TmuxNavigateUp<CR>')
 vim.keymap.set('n', 'C-l', ':TmuxNavigateRight<CR>')
+
+-- lualine
+require("lualine").setup({
+	options = {
+		theme = "auto"
+	}
+})
