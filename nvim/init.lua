@@ -2,7 +2,6 @@ vim.o.number = true
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
 vim.o.clipboard = unnamedplus -- use system clipboard
-vim.o.winborder = "rounded"
 
 vim.o.smartindent = true -- smart auto indenting
 vim.o.autoindent = true  -- copy indent from current line
@@ -38,7 +37,12 @@ vim.pack.add({
 	-- treesitter
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
 
-	-- lspconfig
+	-- lspconfig and completions
+	{ src = "https://github.com/saadparwaiz1/cmp_luasnip" },  -- dep of luasnip
+	{ src = "https://github.com/rafamadriz/friendly-snippets" }, -- dep of luasnip
+	{ src = "https://github.com/L3MON4D3/LuaSnip" },          -- used by cmp
+	{ src = "https://github.com/hrsh7th/nvim-cmp" },
+	{ src = "https://github.com/hrsh7th/cmp-nvim-lsp" }, -- passed into lspconfig
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
 
 	-- tmux-nav
@@ -49,8 +53,38 @@ vim.pack.add({
 })
 
 -- lspconfig
+local cmp = require('cmp')
+require("luasnip.loaders.from_vscode").lazy_load()
+cmp.setup({
+	snippet = {
+		expand = function(args)
+			require("luasnip").lsp_expand(args.body)
+		end,
+	},
+	window = {
+		completion = cmp.config.window.bordered(),
+		documentation = cmp.config.window.bordered(),
+	},
+	mapping = cmp.mapping.preset.insert({
+		['<C-b>'] = cmp.mapping.scroll_docs(-4),
+		['<C-f>'] = cmp.mapping.scroll_docs(4),
+		['<C-Space>'] = cmp.mapping.complete(),
+		['<C-e>'] = cmp.mapping.abort(),
+		['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+	}),
+	sources = cmp.config.sources({
+		{ name = "nvim_lsp" },
+	}, {
+		{ name = "buffer" },
+	}),
+})
+
+-- The nvim-cmp almost supports LSP's capabilities so You should advertise it to LSP servers..
+local default_capabilities = require('cmp_nvim_lsp').default_capabilities()
+
 vim.lsp.enable({ "lua_ls", "rust_analyzer", "gopls", "pyright", "clangd", "ruff" })
 vim.lsp.config('pyright', {
+	capabilities = default_capabilities,
 	settings = {
 		pyright = {
 			-- Using Ruff's import organizer
@@ -65,21 +99,19 @@ vim.lsp.config('pyright', {
 	},
 })
 vim.lsp.config('clangd', {
+	capabilities = default_capabilities,
 	filetypes = { "cpp", "hpp", "c", "h" },
 	cmd = { 'clangd', '--background-index', '--clang-tidy', '--log=verbose' },
 	init_options = {
 		fallbackFlags = { '-std=c++17' },
 	},
 })
-vim.api.nvim_create_autocmd('LspAttach', {
-	callback = function(ev)
-		local client = vim.lsp.get_client_by_id(ev.data.client_id)
-		if client:supports_method('textDocument/completion') then
-			vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
-		end
-	end,
+vim.lsp.config('gopls', {
+	capabilities = default_capabilities
 })
-vim.cmd("set completeopt+=noselect")
+vim.lsp.config('rust_analyzer', {
+	capabilities = default_capabilities
+})
 
 vim.keymap.set('n', '<leader>gf', vim.lsp.buf.format, {})
 vim.keymap.set('n', 'ge', ':lua vim.diagnostic.open_float() <CR>')
