@@ -2,7 +2,7 @@ vim.o.number = true
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
 vim.o.clipboard = unnamedplus -- use system clipboard
-
+vim.o.termguicolors = true
 vim.o.smartindent = true -- smart auto indenting
 vim.o.autoindent = true  -- copy indent from current line
 
@@ -128,6 +128,13 @@ vim.cmd(":hi statusline guibg=NONE")
 
 -- neotree
 vim.keymap.set("n", "<C-n>", ":Neotree filesystem reveal left<CR>")
+require("neo-tree").setup({
+        filesystem = {
+                follow_current_file = {
+                        enabled = true,
+                }
+        }
+})
 
 -- telescope
 local builtin = require("telescope.builtin")
@@ -162,3 +169,5 @@ require("lualine").setup({
 		theme = "auto"
 	}
 })
+
+vim.api.nvim_set_keymap("i", "jj", "<Esc>", { noremap = false })
